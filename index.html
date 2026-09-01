@@ -39,14 +39,20 @@
         const params = parseParams(search.slice(1));
         if (params.path) {
             console.log('Path parameter found:', params.path);
+            let siteData = null;
             try {
-            const siteData = await getSiteData(params.path);
+                siteData = await getSiteData(params.path);
             } catch (err) {
                 console.error('Error fetching site data:', err);
                 error = err.message;
             }
-            window.location.href = siteData;
-            return;
+            if (!siteData) {
+                error = `No site data found for [${params.path}]`;
+            }
+            if (!error) {
+                window.location.href = siteData;
+                return;
+            }
         } else {
             console.log('No path parameter found');
             error = 'No path parameter found';
