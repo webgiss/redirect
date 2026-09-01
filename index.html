@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Redirect demo site</title>
+    <script type="text/javascript">
+        const { protocol, hostname, port, search, pathname, hash } = window.location;
+
+        const createElementExtended = (name, params) => {
+            /** @type{HTMLElement} */
+            const element = document.createElement(name)
+            if (!params) {
+                params = {}
+            }
+            const { attributes, text, children, parent, prependIn, classnames, id, style, prevSibling, nextSibling, onCreated } = params
+            if (attributes) {
+                for (let attributeName in attributes) {
+                    element.setAttribute(attributeName, attributes[attributeName])
+                }
+            }
+            if (style) {
+                for (let key in style) {
+                    element.style[key] = style[key];
+                }
+            }
+            if (text) {
+                element.textContent = text;
+            }
+            if (children) {
+                const addChild = (child) => {
+                    if (child) {
+                        if (typeof child === 'string') {
+                            element.appendChild(document.createTextNode(child))
+                        } else if (Array.isArray(child)) {
+                            for (let subChild of child) {
+                                addChild(subChild)
+                            }
+                        } else {
+                            element.appendChild(child)
+                        }
+                    }
+                }
+
+                for (let child of children) {
+                    addChild(child)
+                }
+            }
+            if (parent) {
+                parent.appendChild(element)
+            }
+            if (prependIn) {
+                prependIn.prepend(element)
+            }
+            if (classnames) {
+                for (let classname of classnames) {
+                    element.classList.add(classname)
+                }
+            }
+            if (id) {
+                element.id = id
+            }
+            if (prevSibling) {
+                if (prevSibling.parentElement) {
+                    prevSibling.parentElement.insertBefore(element, prevSibling.nextSibling)
+                } else {
+                    prevSibling.parentElement.appendChild(element)
+                }
+            }
+            if (nextSibling) {
+                nextSibling.parentElement.insertBefore(element, nextSibling)
+            }
+            if (onCreated) {
+                onCreated(element)
+            }
+            return element
+        }
+
+        createElementExtended('ul', {
+            children: Object.entries({
+                protocol, hostname, port, search, pathname, hash
+            }).map(([key, value]) => createElementExtended('li', { text: `${key}: ${value}` }))
+        })
+    </script>
+</head>
+
+<body>
+</body>
+
+</html>
