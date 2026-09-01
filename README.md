@@ -33,6 +33,14 @@ https://<your-username>.github.io/<repository-name>/<your-short-url>
 
 If you enter `https://<your-username>.github.io/<repository-name>/g`, it will redirect you to `https://www.google.com/`.
 
+## Editing the `sites.json` file
+
+You can edit the `sites.json` file to add, remove, or modify your short URL mappings. Each key represents the short URL, and the corresponding value is the full URL to which it should redirect.
+
+You can edit the file by cloning the repository to your local machine if you're used to git, but if you have no experience with git, you can also edit the file directly on GitHub by navigating to the `sites.json` ( https://github.com/<your-username>/<repository-name>/blob/main/sites.json ) file in your repository and clicking the pencil icon to edit it.
+
+When you're done editing, just click the "Commit changes" button to save your modifications.
+
 ## Advanced Usage
 
 ### Custom Domain
