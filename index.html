@@ -77,9 +77,14 @@
         }
 
         createElementExtended('ul', {
-            children: Object.entries({
-                protocol, hostname, port, search, pathname, hash
-            }).map(([key, value]) => createElementExtended('li', { text: `${key}: ${value}` }))
+            parent: document.body,
+            children: Object
+                .entries({
+                    protocol, hostname, port, search, pathname, hash
+                })
+                .map(
+                    ([key, value]) => createElementExtended('li', { text: `${key}: ${value}` })
+                ),
         })
     </script>
 </head>
