@@ -138,7 +138,10 @@
                         ([key, value]) => createElementExtended('li', { text: `${key}: ${value}` })
                     ),
             })
-            createElementExtended('p', { text: `Error: [${error}]` });
+            createElementExtended('p', { 
+                parent: document.body,
+                text: `Error: [${error}]` 
+            });
         }
     }
     main();
