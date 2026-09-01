@@ -10,87 +10,133 @@
 </body>
 
 <script type="text/javascript">
-    const { protocol, hostname, port, search, pathname, hash } = window.location;
-
-    const createElementExtended = (name, params) => {
-        /** @type{HTMLElement} */
-        const element = document.createElement(name)
-        if (!params) {
-            params = {}
+    const getSiteData = async (idSite) => {
+        const response = await fetch('sites.json')
+        if (!response.ok) {
+            throw new Error('Failed to fetch sites.json');
         }
-        const { attributes, text, children, parent, prependIn, classnames, id, style, prevSibling, nextSibling, onCreated } = params
-        if (attributes) {
-            for (let attributeName in attributes) {
-                element.setAttribute(attributeName, attributes[attributeName])
-            }
+        const sites = await response.json();
+        if (!sites) {
+            throw new Error('No sites data found');
         }
-        if (style) {
-            for (let key in style) {
-                element.style[key] = style[key];
-            }
+        console.log('Sites data:', JSON.stringify(sites));
+        const sitesData = sites[params.path];
+        if (!sitesData) {
+            throw new Error(`No site data found for path: [${params.path}]`);
         }
-        if (text) {
-            element.textContent = text;
-        }
-        if (children) {
-            const addChild = (child) => {
-                if (child) {
-                    if (typeof child === 'string') {
-                        element.appendChild(document.createTextNode(child))
-                    } else if (Array.isArray(child)) {
-                        for (let subChild of child) {
-                            addChild(subChild)
-                        }
-                    } else {
-                        element.appendChild(child)
-                    }
-                }
-            }
-
-            for (let child of children) {
-                addChild(child)
-            }
-        }
-        if (parent) {
-            parent.appendChild(element)
-        }
-        if (prependIn) {
-            prependIn.prepend(element)
-        }
-        if (classnames) {
-            for (let classname of classnames) {
-                element.classList.add(classname)
-            }
-        }
-        if (id) {
-            element.id = id
-        }
-        if (prevSibling) {
-            if (prevSibling.parentElement) {
-                prevSibling.parentElement.insertBefore(element, prevSibling.nextSibling)
-            } else {
-                prevSibling.parentElement.appendChild(element)
-            }
-        }
-        if (nextSibling) {
-            nextSibling.parentElement.insertBefore(element, nextSibling)
-        }
-        if (onCreated) {
-            onCreated(element)
-        }
-        return element
+        console.log('Final sites data:', sitesData);
+        return sitesData;
     }
 
-    createElementExtended('ul', {
-        parent: document.body,
-        children: Object
-            .entries({
-                protocol, hostname, port, search, pathname, hash
+    const main = async () => {
+        const { protocol, hostname, port, search, pathname, hash } = window.location;
+        let error = null;
+
+        const parseParams = (paramString) => {
+            return Object.fromEntries(paramString.split('&').map(item => [item.slice(0, item.indexOf('=')), item.slice(item.indexOf('=') + 1)]).filter(entry => entry[0].length));
+        }
+
+        const params = parseParams(search.slice(1));
+        if (params.path) {
+            console.log('Path parameter found:', params.path);
+            try {
+            const siteData = await getSiteData(params.path);
+            } catch (err) {
+                console.error('Error fetching site data:', err);
+                error = err.message;
+            }
+            window.location.href = siteData;
+            return;
+        } else {
+            console.log('No path parameter found');
+            error = 'No path parameter found';
+        }
+
+        if (error) {
+            const createElementExtended = (name, params) => {
+                /** @type{HTMLElement} */
+                const element = document.createElement(name)
+                if (!params) {
+                    params = {}
+                }
+                const { attributes, text, children, parent, prependIn, classnames, id, style, prevSibling, nextSibling, onCreated } = params
+                if (attributes) {
+                    for (let attributeName in attributes) {
+                        element.setAttribute(attributeName, attributes[attributeName])
+                    }
+                }
+                if (style) {
+                    for (let key in style) {
+                        element.style[key] = style[key];
+                    }
+                }
+                if (text) {
+                    element.textContent = text;
+                }
+                if (children) {
+                    const addChild = (child) => {
+                        if (child) {
+                            if (typeof child === 'string') {
+                                element.appendChild(document.createTextNode(child))
+                            } else if (Array.isArray(child)) {
+                                for (let subChild of child) {
+                                    addChild(subChild)
+                                }
+                            } else {
+                                element.appendChild(child)
+                            }
+                        }
+                    }
+
+                    for (let child of children) {
+                        addChild(child)
+                    }
+                }
+                if (parent) {
+                    parent.appendChild(element)
+                }
+                if (prependIn) {
+                    prependIn.prepend(element)
+                }
+                if (classnames) {
+                    for (let classname of classnames) {
+                        element.classList.add(classname)
+                    }
+                }
+                if (id) {
+                    element.id = id
+                }
+                if (prevSibling) {
+                    if (prevSibling.parentElement) {
+                        prevSibling.parentElement.insertBefore(element, prevSibling.nextSibling)
+                    } else {
+                        prevSibling.parentElement.appendChild(element)
+                    }
+                }
+                if (nextSibling) {
+                    nextSibling.parentElement.insertBefore(element, nextSibling)
+                }
+                if (onCreated) {
+                    onCreated(element)
+                }
+                return element
+            }
+
+            createElementExtended('ul', {
+                parent: document.body,
+                children: Object
+                    .entries({
+                        protocol, hostname, port, search, pathname, hash
+                    })
+                    .map(
+                        ([key, value]) => createElementExtended('li', { text: `${key}: ${value}` })
+                    ),
             })
-            .map(
-                ([key, value]) => createElementExtended('li', { text: `${key}: ${value}` })
-            ),
-    })
+            createElementExtended('p', { text: `Error: [${error}]` });
+        }
+    }
+    main();
+
 </script>
 
 </html>
