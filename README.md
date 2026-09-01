@@ -59,3 +59,8 @@ In case of an error (mainly, the short URL does not exist in the `sites.json` fi
 
 That page is a minimal HTML static page that works, but is not very user-friendly. That's on purpose, you can edit the `error.html` file to customize the look and content of that page. It's currently minimalistic in order to make it readable by anyone. You can add your brand / style to make it more appealing.
 
+## ⚠️ Warning
+
+This project is *not* suited for handling private or sensitive URLs. Once someone has access to one link, they can potentially access all other links as well by accessing the file `https://<your-username>.github.io/<repository-name>/sites.json`. **Never put in `sites.json` any URL that you want to keep private**.
+
+
