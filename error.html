@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Error</title>
+    <style>
+        /* Add your custom CSS styles here */
+    </style>
+    <script>
+        const parseParams = (paramString) => {
+            return Object.fromEntries(paramString.split('&').map(item => [item.slice(0, item.indexOf('=')), item.slice(item.indexOf('=') + 1)]).filter(entry => entry[0].length));
+        }
+
+        const readyPromise = new Promise((resolve, reject) => {
+            if (document.readyState === 'complete' || (document.readyState !== 'loading' && !document.documentElement.doScroll)) {
+                setTimeout(() => resolve(), 1);
+            } else {
+                const onContentLoaded = () => {
+                    resolve();
+                    document.removeEventListener('DOMContentLoaded', onContentLoaded, false);
+                }
+                document.addEventListener('DOMContentLoaded', onContentLoaded, false);
+            }
+        })
+
+        readyPromise.then(async () => {
+            const params = parseParams(window.location.search.slice(1));
+            if (params.error) {
+                document.getElementById('error-message').textContent = decodeURIComponent(params.error);
+            }
+        });
+
+    </script>
+
+<body>
+    <!-- Include your custom error message page content here. This is on purpose left simple for demonstration -->
+    <h1>Error</h1>
+    <p id="error-message"></p>
+</body>
+</head>
