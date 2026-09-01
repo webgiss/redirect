@@ -20,9 +20,9 @@
             throw new Error('No sites data found');
         }
         console.log('Sites data:', JSON.stringify(sites));
-        const sitesData = sites[params.path];
+        const sitesData = sites[idSite];
         if (!sitesData) {
-            throw new Error(`No site data found for path: [${params.path}]`);
+            throw new Error(`No site data found for path: [${idSite}]`);
         }
         console.log('Final sites data:', sitesData);
         return sitesData;
